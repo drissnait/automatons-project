@@ -142,7 +142,53 @@ void print_automate_concatene(struct graphe g){
 	}
 }
 
+/** prend deux automates standard en paramètre, et renvoie un automate standard
+ reconnaissant la réunion de leurs langages **/
+ 
+ struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 
+ 	struct graphe g;
+	g.nb_etats=g1.nb_etats+g2.nb_etats-1;
+	int num_sommet=0;			/*variable qui va servir pour repérer les états finaux dans le nv graphe*/
+	int j=0;
+	g.tab_etats=malloc(g.nb_etats*2*sizeof(struct etat));
+	g.tab_arretes=malloc(g.nb_etats*2*sizeof(struct etat));
+	int i;
+	for (i=0;i<g1.nb_etats-1;i++){
+		g.tab_etats[j].num_etat=i+1;
+		g.tab_arretes[i].sommet_depart.num_etat=i+1;
+		g.tab_arretes[i].symbole =g1.tab_arretes[i].symbole;
+		g.tab_arretes[i].sommet_destination.num_etat=g1.tab_arretes[i].sommet_destination.num_etat;
+		
+		//printf("---Transition(s) : %d, %s, %d\n",g.tab_arretes[i].sommet_depart.num_etat, g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);
+	}
+
+	// le sommet initial de g1 sera le sommet initiale de g2
+	
+	g.tab_etats[i].num_etat=i+1;	
+	g.tab_arretes[i].sommet_depart.num_etat=g1.sommet_initial.num_etat;
+	g.tab_arretes[i].sommet_destination.num_etat=g2.tab_arretes[k].sommet_destination.num_etat+1;
+
+
+	for (int k=0,j=i+1;j<g.nb_etats-1;j++,k++){
+		g.tab_etats[j].num_etat=j+1;
+		g.tab_arretes[j].sommet_depart.num_etat=j+1;
+		g.tab_arretes[j].symbole =g2.tab_arretes[k].symbole;
+		g.tab_arretes[j].sommet_destination.num_etat=g2.tab_arretes[k].sommet_destination.num_etat+1;
+		//printf("---Transition(s) : %d, %s, %d\n",g.tab_arretes[j].sommet_depart.num_etat, g.tab_arretes[j].symbole, g.tab_arretes[j].sommet_destination.num_etat);
+		
+	}	
+	
+
+	/**les etats finals restent finals **/
+	g.sommet_initial.num_etat=g.tab_arretes[0].sommet_depart.num_etat;
+		
+	return g;
+
+
+ 
+ 
+ }
 
 
 
