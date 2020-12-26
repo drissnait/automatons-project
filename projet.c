@@ -84,6 +84,192 @@ void print_automate_un_mot(struct graphe g3){
 	printf("---Transition(s) : %d, %s, %d\n",g3.tab_arretes[0].sommet_depart.num_etat, g3.tab_arretes[0].symbole, g3.tab_arretes[0].sommet_destination.num_etat);
 }
 
+struct graphe reunion_automate(struct graphe g1, struct graphe g2){
+	struct graphe g;
+	g.nb_etats=g1.nb_etats+g2.nb_etats-1;
+	g.sommet_initial.num_etat=1;
+	g.nb_transitions=g1.nb_transitions+g2.nb_transitions;
+	g.tab_etats=malloc(g.nb_etats*g.nb_etats*sizeof(struct etat));
+	g.tab_arretes=malloc(g.nb_etats*g.nb_etats*sizeof(struct etat));
+	int i;
+	int indiceGraphe;
+	int dernierElement;
+	if(g1.nb_transitions> g2.nb_transitions){
+		for (i=0, indiceGraphe=0;i<g2.nb_transitions;i++){
+			g.tab_etats[indiceGraphe].num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+			
+			g.tab_arretes[indiceGraphe].symbole =g1.tab_arretes[i].symbole;
+			/**************Premier pas de reunion*************/
+			if (i==0){
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+				g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g1.tab_arretes[i].sommet_destination.num_etat;
+
+			}
+			/************a partir du 2e sommet*************/
+			else{
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+				g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+			}
+			//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+			indiceGraphe++;
+			g.tab_etats[indiceGraphe].num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+			if(i==0){
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+			}
+			else{
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+			}
+			g.tab_arretes[indiceGraphe].symbole =g2.tab_arretes[i].symbole;
+			g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+			//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+			indiceGraphe++;
+	
+		}
+		dernierElement=i;
+		/***********Suite du graphe 1 pcq taille G1> taille G2***********/
+		for (int j=i;j<g1.nb_transitions;j++){
+			g.tab_arretes[indiceGraphe].symbole =g1.tab_arretes[j].symbole;
+			if(j==i){
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+			}
+			else{
+				g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat;
+			}
+
+			g.tab_etats[indiceGraphe].num_etat=g.tab_arretes[indiceGraphe].sommet_depart.num_etat;
+			g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+			//printf("---Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+			indiceGraphe++;	
+			dernierElement++;
+		}
+	}
+	else{
+		if (g1.nb_transitions==g2.nb_transitions){	/********meme longueur********/
+			for (i=0, indiceGraphe=0;i<g2.nb_transitions;i++){
+				g.tab_etats[indiceGraphe].num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+			
+				g.tab_arretes[indiceGraphe].symbole =g1.tab_arretes[i].symbole;
+				/**************Premier pas de reunion*************/
+				if (i==0){
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+					g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g1.tab_arretes[i].sommet_destination.num_etat;
+
+				}
+				/************a partir du 2e sommet*************/
+				else{
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+					g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+				}
+				//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+				indiceGraphe++;
+				g.tab_etats[indiceGraphe].num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+				if(i==0){
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+				}
+				else{
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+				}
+				g.tab_arretes[indiceGraphe].symbole =g2.tab_arretes[i].symbole;
+				g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+				//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+				indiceGraphe++;
+				dernierElement++;
+	
+			}
+		}	
+		else{		/****longueur G2 > longueur G1*******/
+			for (i=0, indiceGraphe=0;i<g1.nb_transitions;i++){
+				g.tab_etats[indiceGraphe].num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+			
+				g.tab_arretes[indiceGraphe].symbole =g2.tab_arretes[i].symbole;
+				/**************Premier pas de reunion*************/
+				if (i==0){
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g2.tab_arretes[i].sommet_depart.num_etat;
+					g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g2.tab_arretes[i].sommet_destination.num_etat;
+
+				}
+				/************a partir du 2e sommet*************/
+				else{
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+					g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+				}
+				//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+				indiceGraphe++;
+				g.tab_etats[indiceGraphe].num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+				if(i==0){
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g1.tab_arretes[i].sommet_depart.num_etat;
+				}
+				else{
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+				}
+				g.tab_arretes[indiceGraphe].symbole =g1.tab_arretes[i].symbole;
+				g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+				//printf("Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+				indiceGraphe++;
+	
+			}
+			dernierElement=i;
+			/***********Suite du graphe 1 pcq taille G1> taille G2***********/
+			for (int j=i;j<g2.nb_transitions;j++){
+				g.tab_arretes[indiceGraphe].symbole =g2.tab_arretes[j].symbole;
+				if(j==i){
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_depart.num_etat+1;
+				}
+				else{
+					g.tab_arretes[indiceGraphe].sommet_depart.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat;
+				}
+
+				g.tab_etats[indiceGraphe].num_etat=g.tab_arretes[indiceGraphe].sommet_depart.num_etat;
+				g.tab_arretes[indiceGraphe].sommet_destination.num_etat=g.tab_arretes[indiceGraphe-1].sommet_destination.num_etat+1;
+				//printf("---Transition g du sommet %d avec %s vers l'état %d\n",g.tab_arretes[indiceGraphe].sommet_depart.num_etat, g.tab_arretes[indiceGraphe].symbole, g.tab_arretes[indiceGraphe].sommet_destination.num_etat);
+				indiceGraphe++;	
+				dernierElement++;
+			}
+		}
+	}
+	g.tab_etats[g.nb_transitions].num_etat=dernierElement+1; /*DernierElement = etat final sans transition*/
+	g.tab_arretes[g.nb_transitions].sommet_depart.num_etat=true;
+	/**************indiquer les sommets finaux*************/
+	for (int i=0;i<=g.nb_transitions;i++){
+		if(i<g.nb_etats-1){
+			g.tab_etats[i].is_final=false;
+		}
+		else{
+			g.tab_etats[i].is_final=true;	
+		}	
+	}
+
+	return g;
+	
+}
+
+void print_automate_reunion(struct graphe g){
+	printf("\nAutomate : \n");
+	printf("---nombre de sommets : %d\n", g.nb_etats);
+	printf("---sommet initial : %d\n", g.sommet_initial.num_etat);
+	printf("---nombre des transitions : %d\n",g.nb_transitions);
+
+	/***** Le sommet 1 qui reunit les 2 graphes****/
+	printf("---Etat n° : %d\n",g.tab_arretes[0].sommet_depart.num_etat);
+	printf("------Transition avec le symbole %s vers l'etat n° %d\n", g.tab_arretes[0].symbole, g.tab_arretes[0].sommet_destination.num_etat);
+	printf("------Transition avec le symbole %s vers l'etat n° %d\n", g.tab_arretes[1].symbole, g.tab_arretes[1].sommet_destination.num_etat);	
+	for (int i=2;i<=g.nb_transitions;i++){ //G.nb_transitions a la place de <g.nb_etats-1
+		if(i<g.nb_etats-1){
+			printf("---Etat n° : %d\n",g.tab_arretes[i].sommet_depart.num_etat);
+			//printf("------Transition avec le symbole %s vers l'etat n° %d\n",g.tab_arretes[i].symbole, i+2);
+			  printf("------Transition avec le symbole %s vers l'etat n° %d\n", g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);
+		
+		
+			printf("------Final : Non\n");
+		}
+		
+		else{
+			printf("---Etat n° : %d\n",i+1);
+			printf("------Final : Oui\n");
+		}
+	}
+}
+
 struct graphe concatenate_automate(struct graphe g1, struct graphe g2){
 	struct graphe g;
 	g.nb_etats=g1.nb_etats+g2.nb_etats-1;
@@ -122,6 +308,7 @@ struct graphe concatenate_automate(struct graphe g1, struct graphe g2){
 	}	
 	g.tab_etats[g.nb_transitions].num_etat=dernierElement+1; /*DernierElement = etat final sans transition*/
 	g.tab_arretes[g.nb_transitions].sommet_depart.num_etat=true;
+	/**************indiquer les sommets finaux*************/
 	for (int i=0;i<=g.nb_transitions;i++){
 		if(i<g.nb_etats-1){
 			g.tab_etats[i].is_final=false;
@@ -211,30 +398,42 @@ int main(){
 	g8=automate_un_mot("c");
 	struct graphe g9;
 	g9=automate_un_mot("d");
-	printf("------------------------Concatenation-----------------------------\n");
-	print_automate_un_mot(g3);
-	struct graphe g5;
-	g5=concatenate_automate(g3, g4);
-	print_automate_concatene(g5);
-	struct graphe g6;
-	g6=concatenate_automate(g5, g8);
-	print_automate_concatene(g6);
-	struct graphe g7;
-	g7=concatenate_automate(g6, g9);
-	print_automate_concatene(g7);
-	struct graphe g77;
-	g77=concatenate_automate(g7, g6);
-	print_automate_concatene(g77);
-	struct graphe g777;
-	g777=concatenate_automate(g77, g7);
-	print_automate_concatene(g777);
-
-	printf("------------------------fermeture de kleene-----------------------------\n");
-	/***Test Fermeture de kleene***/
-	struct graphe graphe=fermeture_kleene(g777);
-	print_kleene(g777);
+	//print_automate_un_mot(g3);
 
 	
+	printf("------------------------Concatenation-----------------------------\n");
+	struct graphe g5;
+	g5=concatenate_automate(g3, g4);
+	//print_automate_concatene(g5)
+	struct graphe g6;
+	g6=concatenate_automate(g5, g8);
+	struct graphe g66;
+	g66=concatenate_automate(g5, g8);
+	//reunion_automate(g6,g66);
+	//print_automate_concatene(g6);
+	//reunion_automate(g5,g8);
+	struct graphe g7;
+	g7=concatenate_automate(g6, g9);
+	//print_automate_concatene(g7);
+	//reunion_automate(g6,g9);
+	struct graphe g77;
+	g77=concatenate_automate(g7, g6);
+	//print_automate_concatene(g77);
+	//reunion_automate(g7,g6);
+	struct graphe g777;
+	g777=concatenate_automate(g77, g7);
+	//print_automate_concatene(g777);
+	struct graphe grapheReunion;
+	grapheReunion=reunion_automate(g7,g77);
+	printf("------------------------Reunion-----------------------------\n");
+	print_automate_reunion(grapheReunion);
+	
+
+
+	//printf("------------------------fermeture de kleene-----------------------------\n");
+	/***Test Fermeture de kleene***/
+	struct graphe graphe=fermeture_kleene(g777);
+	//print_kleene(graphe);
 }
 
 
