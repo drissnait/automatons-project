@@ -16,8 +16,8 @@ typedef struct arrete{
 typedef struct graphe{
 	etat sommet_initial;
 	int nb_etats;
+	int nb_transitions;
 	struct etat* tab_etats;
 	struct arrete* tab_arretes;
 }graphe;
-
 
