@@ -29,6 +29,8 @@ struct graphe automate_un_mot(char* mot);/*genere un automate pour un mot*/
 struct graphe reunion_automate(struct graphe g1, struct graphe g2);/*reunion de deux automates*/
 struct graphe concatenation_automate(struct graphe g1, struct graphe g2);/*concatene deux graphes*/
 struct graphe fermeture_kleene(struct graphe g);/*fermeture de kleene*/
+bool automate_deterministe(struct graphe g,char* c );/*execute un string sur un automate  */
+
 
 void addToGraphe(struct graphe* g, struct etat etat); /*ajoute etat dans le graphe s'il n'y figure pas*/
 
@@ -38,6 +40,8 @@ void print_automate_un_mot(struct graphe g3);/*affiche l'automate généré pour
 void print_reunion(struct graphe g);/*affiche l'automate de la réunion*/
 void print_concatenate(struct graphe g);/*affiche le graphe de la concatenation*/
 void print_kleene(struct graphe g);/*affiche le graphe de la fermeture de kleene*/
+void print_automate_deterministe(struct graphe g,char * c);/*affiche si le string est valide sur l'automate ou pas */
+
 
 
 
