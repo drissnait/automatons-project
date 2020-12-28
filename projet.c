@@ -245,27 +245,37 @@ void print_concatenate(struct graphe g){
 
 struct graphe fermeture_kleene(struct graphe g){
 	int nbrEtatsFinaux=0;
+	int transitionsSommetInit=0;
 	for (int i=0;i<g.nb_transitions;i++){
 		//printf(" transition de %d avec le symbole %s vers le sommet %d\n",g.tab_arretes[i].sommet_depart.num_etat, g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);
 		if (g.tab_arretes[i].sommet_destination.is_final==true){
 			nbrEtatsFinaux++;
 		}
 	}
+	for (int i=0;i<g.nb_transitions;i++){
+		if(g.tab_arretes[i].sommet_depart.num_etat==1){
+			transitionsSommetInit++;
+		}	
+	}
 	struct graphe gRetour;
-	int nbr_transitions=g.nb_transitions+nbrEtatsFinaux;
+	int nbr_transitions=g.nb_transitions+transitionsSommetInit;
 	gRetour.tab_etats=malloc(g.nb_etats*sizeof(struct etat)+1);
 	gRetour.tab_arretes=malloc(nbr_transitions*sizeof(struct arrete)+1);
 	for (int i=0;i<g.nb_transitions;i++){
 		gRetour.tab_arretes[i]=g.tab_arretes[i];
 	}
 	int ajout=0;
+	int j=0;
 	for (int i=0; i<g.nb_transitions;i++){
 		if (g.tab_arretes[i].sommet_destination.is_final==true){
-				gRetour.tab_arretes[g.nb_transitions+ajout].sommet_depart=g.tab_arretes[i].sommet_destination;
-				gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[0].sommet_destination.num_etat;
-				gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[0].symbole;
-				printf("On stocke dans %d\n",g.nb_transitions+ajout);
-				ajout++;
+				while(g.tab_arretes[j].sommet_depart.num_etat==1){
+					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_depart=g.tab_arretes[i].sommet_destination;
+					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[0].sommet_destination.num_etat;
+					gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[0].symbole;
+					ajout++;
+					j++;
+				}
+				j=0;
 		}
 
 	}
