@@ -150,7 +150,7 @@ void print_reunion(struct graphe g){
 		if(i<g.nb_etats-1){
 			printf("-----Etat n° %d\n",g.tab_arretes[i].sommet_depart.num_etat);
 			printf("-------Transaction avec le symbole %s vers l'etat %d\n",g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);
-			printf("-------Final : %d\n",g.tab_arretes[i].sommet_depart.is_final);
+			//printf("-------Final : %d\n",g.tab_arretes[i].sommet_depart.is_final);
 		}
 	}
 	printf("\n-----Liste des etats finaux : \n");
@@ -327,8 +327,8 @@ int main(){
 	//print_concatenate(gabcd);
 
 	struct graphe gabcd_re_conc;
-	gabcd_re_conc=reunion_automate(gab, gcd);
-	//print_reunion(gabcd_re_conc);
+	gabcd_re_conc=reunion_automate(gabcd, ge);
+	print_reunion(gabcd_re_conc);
 
 
 	struct graphe gabcde;
