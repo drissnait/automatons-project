@@ -126,8 +126,8 @@ struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 			
 		}		
 		else{
-			g.tab_arretes[i].sommet_depart.num_etat=g2.tab_arretes[j].sommet_depart.num_etat+numero_etat;
-			g.tab_arretes[i].sommet_destination.num_etat=g2.tab_arretes[j].sommet_destination.num_etat+numero_etat;	
+			g.tab_arretes[i].sommet_depart.num_etat=g.tab_arretes[i-1].sommet_destination.num_etat;
+			g.tab_arretes[i].sommet_destination.num_etat=g.tab_arretes[i].sommet_depart.num_etat+1;	
 			g.tab_arretes[i].sommet_depart.is_final=g2.tab_arretes[j].sommet_depart.is_final;
 			g.tab_arretes[i].sommet_destination.is_final=g2.tab_arretes[j].sommet_destination.is_final;
 		}
@@ -279,7 +279,7 @@ int main(){
 	printf("------------------------Graphe pour le langage vide-----------------------------\n");
 	struct graphe g;	
 	g=automate_langage_vide();
-	print_automate_langage_vide(g);
+	//print_automate_langage_vide(g);
 	struct graphe ga;
 	ga=automate_un_mot("a");
 	struct graphe gb;
@@ -304,9 +304,9 @@ int main(){
 	gabcd_reunion=reunion_automate(gab_reunion, gcd_reunion);
 	print_reunion(gabcd_reunion);
 
-	struct graphe gabcde_reunion;
+	/*struct graphe gabcde_reunion;
 	gabcde_reunion=reunion_automate(gabcd_reunion, ge);
-	print_reunion(gabcde_reunion);
+	print_reunion(gabcde_reunion);*/
 
 	/*struct graphe gab;
 	gab=concatenation_automate(gab_reunion, gcd_reunion);
@@ -321,9 +321,14 @@ int main(){
 	gcd=concatenation_automate(gc, gd);
 	//print_concatenate(gcd);
 
+
 	struct graphe gabcd;
 	gabcd=concatenation_automate(gab, gcd);
 	//print_concatenate(gabcd);
+
+	struct graphe gabcd_re_conc;
+	gabcd_re_conc=reunion_automate(gab, gcd);
+	//print_reunion(gabcd_re_conc);
 
 
 	struct graphe gabcde;
