@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "projet.h"
+#include <string.h>
 
 int write_is_final(int sommet, bool isfinal){
 	if (isfinal==true)		
@@ -301,6 +302,79 @@ void print_kleene(struct graphe g){
 	}
 }
 
+bool automate_deterministe(struct graphe g,char* c ){
+	//la longeur de la chaine de charactere c
+	
+	int l_c;
+	l_c=(int)strlen(c);
+	if(g.nb_etats<l_c){
+		return 0;
+	}
+	
+    int i;
+
+    /* s'assure si le string est en ascii*/
+    int code;
+    for(i=0;i<l_c;i++){
+    	code=c[i];
+    	if(code>255 || code<0){
+    		printf("le string n'est pas en ascii \n");
+    		return 0;
+
+    	}
+
+    }
+
+    for(i=0;i<l_c;i++){
+    	
+    	
+
+    	if(*(g.tab_arretes[i].symbole) != c[i]){
+    		
+
+
+    		return 0;
+
+    	}
+    	
+    }
+
+    return 1;
+
+}
+void print_automate_deterministe(struct graphe g,char * c)
+{
+
+    int l_c;
+	l_c=(int)strlen(c);
+	/* s'assure si le string est en ascii*/
+    int code;
+
+    int i;
+    for(i=0;i<l_c;i++){
+    	code = c[i];
+    	
+    	
+
+    	if(code>255 || code <0){
+    		printf("le string %s n'est pas en ascii \n",c);
+    		return;
+    		
+
+    	}
+
+    }
+	if(automate_deterministe(g,c)==0){
+		printf("string %s non valider sur l'automate  \n",c);
+	}else{
+		printf("string %s valider sur l'automate  \n",c);
+	}
+	
+
+
+}
+
+
 
 
 
@@ -367,5 +441,14 @@ int main(){
 	/***Test Fermeture de kleene***/
 	struct graphe graphe=fermeture_kleene(gabcd);	/*abcd devient (abcd)* */
 	print_kleene(graphe);
+
+	printf("------------------------Automate deterministe -----------------------------\n");
+	
+	print_automate_deterministe(ga,"√");
+	print_automate_deterministe(gab,"ab");
+	print_automate_deterministe(gabcd,"abcd");
+	print_automate_deterministe(ga,"elie");
+	print_automate_deterministe(gabcd,"elie");
+	
 }
 
