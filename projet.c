@@ -248,7 +248,6 @@ struct graphe fermeture_kleene(struct graphe g){
 	int nbrEtatsFinaux=0;
 	int transitionsSommetInit=0;
 	for (int i=0;i<g.nb_transitions;i++){
-		//printf(" transition de %d avec le symbole %s vers le sommet %d\n",g.tab_arretes[i].sommet_depart.num_etat, g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);
 		if (g.tab_arretes[i].sommet_destination.is_final==true){
 			nbrEtatsFinaux++;
 		}
@@ -259,7 +258,7 @@ struct graphe fermeture_kleene(struct graphe g){
 		}	
 	}
 	struct graphe gRetour;
-	int nbr_transitions=g.nb_transitions+transitionsSommetInit;
+	int nbr_transitions=g.nb_transitions+transitionsSommetInit*nbrEtatsFinaux;
 	gRetour.tab_etats=malloc(g.nb_etats*sizeof(struct etat)+1);
 	gRetour.tab_arretes=malloc(nbr_transitions*sizeof(struct arrete)+1);
 	for (int i=0;i<g.nb_transitions;i++){
@@ -268,11 +267,11 @@ struct graphe fermeture_kleene(struct graphe g){
 	int ajout=0;
 	int j=0;
 	for (int i=0; i<g.nb_transitions;i++){
-		if (g.tab_arretes[i].sommet_destination.is_final==true){
-				while(g.tab_arretes[j].sommet_depart.num_etat==1){
+		if (g.tab_arretes[i].sommet_destination.is_final==true){		
+				while(g.tab_arretes[j].sommet_depart.num_etat==1){	
 					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_depart=g.tab_arretes[i].sommet_destination;
-					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[0].sommet_destination.num_etat;
-					gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[0].symbole;
+					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[j].sommet_destination.num_etat;
+					gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[j].symbole;
 					ajout++;
 					j++;
 				}
@@ -294,8 +293,8 @@ void print_kleene(struct graphe g){
 	printf("\nAutomate : \n");
 	printf("---nombre de sommets : %d\n", g.nb_etats);
 	printf("---sommet initial : %d\n", g.tab_etats[0].num_etat);
-	printf("---nombre des transitions : %d\n",g.nb_etats-1);
-	for (int i=0;i<g.nb_etats;i++){
+	printf("---nombre des transitions : %d\n",g.nb_transitions);
+	for (int i=0;i<g.nb_transitions;i++){
 		printf("---Etat n° : %d\n",g.tab_arretes[i].sommet_depart.num_etat);
 		printf("------Transition avec le symbole %s vers l'etat n° %d\n", g.tab_arretes[i].symbole, g.tab_arretes[i].sommet_destination.num_etat);		
 		printf("------Final : %d\n", g.tab_arretes[i].sommet_depart.is_final);
@@ -324,23 +323,12 @@ bool automate_deterministe(struct graphe g,char* c ){
     	}
 
     }
-
     for(i=0;i<l_c;i++){
-    	
-    	
-
     	if(*(g.tab_arretes[i].symbole) != c[i]){
-    		
-
-
     		return 0;
-
     	}
-    	
     }
-
     return 1;
-
 }
 void print_automate_deterministe(struct graphe g,char * c)
 {
@@ -349,18 +337,12 @@ void print_automate_deterministe(struct graphe g,char * c)
 	l_c=(int)strlen(c);
 	/* s'assure si le string est en ascii*/
     int code;
-
     int i;
     for(i=0;i<l_c;i++){
     	code = c[i];
-    	
-    	
-
     	if(code>255 || code <0){
     		printf("le string %s n'est pas en ascii \n",c);
     		return;
-    		
-
     	}
 
     }
@@ -369,9 +351,6 @@ void print_automate_deterministe(struct graphe g,char * c)
 	}else{
 		printf("string %s valider sur l'automate  \n",c);
 	}
-	
-
-
 }
 
 
