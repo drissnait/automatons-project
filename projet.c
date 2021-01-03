@@ -4,6 +4,9 @@
 #include "projet.h"
 #include <string.h>
 
+/*
+*Vérifie si un sommet est final
+*/
 int write_is_final(int sommet, bool isfinal){
 	if (isfinal==true)		
 		return sommet;
@@ -24,6 +27,9 @@ struct graphe automate_langage_vide(){
 	g.tab_etats[0].is_final=false;			/*l'etat n'est final*/
 	return g;	
 }
+/*
+*Affichage d'un automate qui reconnait le langage vide 
+*/
 void print_automate_langage_vide(struct graphe g){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 1\n");
@@ -31,6 +37,9 @@ void print_automate_langage_vide(struct graphe g){
 	printf("---sommet initial : %d\n", g.sommet_initial.num_etat);
 }
 
+/*
+*Génére un automate qui reconnait le mot vide 
+*/
 struct graphe automate_mot_vide(){
 	struct graphe g;
 	g.sommet_initial.num_etat=1;			
@@ -40,7 +49,9 @@ struct graphe automate_mot_vide(){
 	g.tab_etats[0].is_final=true;			/*l'etat est final*/
 	return g;	
 }
-
+/*
+*affiche un automate qui reconnait le mot vide 
+*/
 void print_automate_mot_vide(struct graphe g2){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 1\n");
@@ -49,6 +60,9 @@ void print_automate_mot_vide(struct graphe g2){
 	printf("---Sommet(s) final/finaux : %d\n", write_is_final(g2.tab_etats[0].num_etat, g2.tab_etats[0].is_final));
 }
 
+/*
+*Genere un automate qui reconnait un mot composé d'un caractere
+*/
 struct graphe automate_un_mot(char* mot){
 	struct graphe g;
 	g.tab_etats=malloc(2*sizeof(struct etat));
@@ -75,6 +89,9 @@ struct graphe automate_un_mot(char* mot){
 	return g;
 }
 
+/*
+*Affiche un automate qui reconnait un mot
+*/
 void print_automate_un_mot(struct graphe g3){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 2\n");
@@ -85,7 +102,9 @@ void print_automate_un_mot(struct graphe g3){
 	printf("---Transition(s) : %d, %s, %d\n",g3.tab_arretes[0].sommet_depart.num_etat, g3.tab_arretes[0].symbole, g3.tab_arretes[0].sommet_destination.num_etat);
 }
 
-
+/*
+*Ajoute un etat a l'automate
+*/
 void addToGraphe(struct graphe* g, struct etat etat){
 	for (int k=0;k<g->nb_etats;k++){
 		if (g->tab_etats[k].num_etat == etat.num_etat){
@@ -97,6 +116,9 @@ void addToGraphe(struct graphe* g, struct etat etat){
 	return; 
 }
 
+/*
+*Genere un automate qui reconnait la reunion des langages des deux automates passés en parametres
+*/
 struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 	int i;
 	int indiceGraphe;
@@ -138,10 +160,12 @@ struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 		j++;
 		numero_etat++;
 	}
-
 	return g;
 }
 
+/*
+*Affiche un automate resultat de la reunion
+*/
 void print_reunion(struct graphe g){
 	printf("\nAutomate\n");
 	printf("---Nombre d'états : %d\n", g.nb_etats);
@@ -163,9 +187,9 @@ void print_reunion(struct graphe g){
 	
 }
 
-
-
-
+/*
+*Genere un automate qui la concatenation des langages des deux automates passés en paramétre 
+*/
 struct graphe concatenation_automate(struct graphe g1, struct graphe g2){
 	int i;
 	int indiceGraphe;
@@ -224,6 +248,9 @@ struct graphe concatenation_automate(struct graphe g1, struct graphe g2){
 	return g;
 }
 
+/*
+*Affiche un automate resultat de la concatenation
+*/
 void print_concatenate(struct graphe g){
 	printf("\nAutomate\n");
 	printf("---Nombre d'états : %d\n", g.nb_etats);
@@ -243,7 +270,9 @@ void print_concatenate(struct graphe g){
 }
 
 
-
+/*
+*Genere un automate qui reconnait la fermeture de kleene pour l'automate passe en parametres
+*/
 struct graphe fermeture_kleene(struct graphe g){
 	int nbrEtatsFinaux=0;
 	int transitionsSommetInit=0;
@@ -266,29 +295,31 @@ struct graphe fermeture_kleene(struct graphe g){
 	}
 	int ajout=0;
 	int j=0;
+	int indice_while=0;
 	for (int i=0; i<g.nb_transitions;i++){
 		if (g.tab_arretes[i].sommet_destination.is_final==true){		
-				while(g.tab_arretes[j].sommet_depart.num_etat==1){	
-					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_depart=g.tab_arretes[i].sommet_destination;
-					gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[j].sommet_destination.num_etat;
-					gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[j].symbole;
-					ajout++;
-					j++;
+				while(indice_while<g.nb_transitions){
+					if(g.tab_arretes[indice_while].sommet_depart.num_etat==1){	
+						gRetour.tab_arretes[g.nb_transitions+ajout].sommet_depart=g.tab_arretes[i].sommet_destination;
+						gRetour.tab_arretes[g.nb_transitions+ajout].sommet_destination.num_etat=g.tab_arretes[indice_while].sommet_destination.num_etat;
+						gRetour.tab_arretes[g.nb_transitions+ajout].symbole=g.tab_arretes[indice_while].symbole;				
+						ajout++;
+						j++;	
+					}
+				indice_while++;
 				}
+				indice_while=0;
 				j=0;
 		}
-
 	}
-	/*for (int i=0; i<nbr_transitions;i++){
-		printf("Transition de %d avec le symbole %s vers le sommet %d\n", gRetour.tab_arretes[i].sommet_depart.num_etat, gRetour.tab_arretes[i].symbole, gRetour.tab_arretes[i].sommet_destination.num_etat);	
-	}*/
 	gRetour.nb_transitions=nbr_transitions;
 	gRetour.nb_etats=g.nb_etats;
 	return gRetour;
 }
 
-
-
+/*
+*Affiche l'automate de la fermeture de kleene genere
+*/
 void print_kleene(struct graphe g){
 	printf("\nAutomate : \n");
 	printf("---nombre de sommets : %d\n", g.nb_etats);
@@ -301,17 +332,16 @@ void print_kleene(struct graphe g){
 	}
 }
 
-bool automate_deterministe(struct graphe g,char* c ){
-	//la longeur de la chaine de charactere c
-	
+/*
+*Execute un mot sur un automate et verifie s'il est valide
+*/
+bool mot_sur_automate(struct graphe g,char* c ){
 	int l_c;
 	l_c=(int)strlen(c);
 	if(g.nb_etats<l_c){
 		return 0;
 	}
-	
     int i;
-
     /* s'assure si le string est en ascii*/
     int code;
     for(i=0;i<l_c;i++){
@@ -319,7 +349,6 @@ bool automate_deterministe(struct graphe g,char* c ){
     	if(code>255 || code<0){
     		printf("le string n'est pas en ascii \n");
     		return 0;
-
     	}
 
     }
@@ -330,12 +359,14 @@ bool automate_deterministe(struct graphe g,char* c ){
     }
     return 1;
 }
-void print_automate_deterministe(struct graphe g,char * c)
+/*
+*affiche un mot genere sur un automate et verifie s'il est valide ou pas 
+*/
+void print_mot_sur_automate(struct graphe g,char * c)
 {
-
     int l_c;
 	l_c=(int)strlen(c);
-	/* s'assure si le string est en ascii*/
+    /* s'assure si le string est en ascii*/
     int code;
     int i;
     for(i=0;i<l_c;i++){
@@ -344,21 +375,15 @@ void print_automate_deterministe(struct graphe g,char * c)
     		printf("le string %s n'est pas en ascii \n",c);
     		return;
     	}
-
     }
-	if(automate_deterministe(g,c)==0){
-		printf("string %s non valider sur l'automate  \n",c);
+	if(mot_sur_automate(g,c)==0){
+		printf("string %s non valide sur l'automate  \n",c);
 	}else{
-		printf("string %s valider sur l'automate  \n",c);
+		printf("string %s valide sur l'automate  \n",c);
 	}
 }
 
-
-
-
-
 int main(){
-	printf("------------------------Graphe pour le langage vide-----------------------------\n");
 	struct graphe g;	
 	g=automate_langage_vide();
 	//print_automate_langage_vide(g);
@@ -373,61 +398,44 @@ int main(){
 	struct graphe ge;
 	ge=automate_un_mot("e");
 
-	printf("\n\n\n----------reunion------------");
 	struct graphe gab_reunion;
 	gab_reunion=reunion_automate(ga, gb);
-	print_reunion(gab_reunion);
 
 	struct graphe gcd_reunion;
 	gcd_reunion=reunion_automate(gc, gd);
-	print_reunion(gcd_reunion);
 
 	struct graphe gabcd_reunion;
 	gabcd_reunion=reunion_automate(gab_reunion, gcd_reunion);
-	print_reunion(gabcd_reunion);
+	//print_reunion(gabcd_reunion);
 
-	/*struct graphe gabcde_reunion;
-	gabcde_reunion=reunion_automate(gabcd_reunion, ge);
-	print_reunion(gabcde_reunion);*/
-
-	/*struct graphe gab;
-	gab=concatenation_automate(gab_reunion, gcd_reunion);
-	print_concatenate(gab);*/
-
-	//printf("\n\n\n----------concatenation------------");
 	struct graphe gab;
 	gab=concatenation_automate(ga, gb);
-	//print_concatenate(gab);
 
 	struct graphe gcd;
 	gcd=concatenation_automate(gc, gd);
-	//print_concatenate(gcd);
 
-
+	printf("\n------------------------concatenation-----------------------------\n");
 	struct graphe gabcd;
 	gabcd=concatenation_automate(gab, gcd);
-	print_concatenate(gabcd);
-
-	/*struct graphe gabcd_re_conc;
-	gabcd_re_conc=reunion_automate(gabcd, ge);
-	print_reunion(gabcd_re_conc);*/
-
 
 	struct graphe gabcde;
 	gabcde=concatenation_automate(gabcd, ge);
-	//print_concatenate(gabcde);
-	printf("------------------------fermeture de kleene-----------------------------\n");
+	print_concatenate(gabcde);/*concatenation sur les graphes gabcd et ge */
+
+	printf("\n------------------------reunion------------------------------------\n");
+	struct graphe gabcd_re_conc;
+	gabcd_re_conc=reunion_automate(gab, gcd);
+	print_reunion(gabcd_re_conc); /*reunion  les graphes gab et gcd */
+
+	printf("\n------------------------fermeture de kleene-----------------------------\n");
 	/***Test Fermeture de kleene***/
 	struct graphe graphe=fermeture_kleene(gabcd);	/*abcd devient (abcd)* */
 	print_kleene(graphe);
 
-	printf("------------------------Automate deterministe -----------------------------\n");
+	printf("\n------------------------Automate deterministe -----------------------------\n");
 	
-	print_automate_deterministe(ga,"√");
-	print_automate_deterministe(gab,"ab");
-	print_automate_deterministe(gabcd,"abcd");
-	print_automate_deterministe(ga,"elie");
-	print_automate_deterministe(gabcd,"elie");
-	
+	print_mot_sur_automate(gab,"ab");
+	print_mot_sur_automate(gabcd,"abcd");
+	print_mot_sur_automate(ga,"e");
 }
 
