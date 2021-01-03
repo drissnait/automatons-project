@@ -18,8 +18,8 @@ int write_is_final(int sommet, bool isfinal){
 /*
 Génére un automate qui reconnait le langage vide 
 */
-struct graphe automate_langage_vide(){
-	struct graphe g;				
+struct automate automate_langage_vide(){
+	struct automate g;				
 	g.sommet_initial.num_etat=1;			
 	g.sommet_initial.is_final=false;		
 	g.tab_etats=malloc(1*sizeof(struct etat));
@@ -30,7 +30,7 @@ struct graphe automate_langage_vide(){
 /*
 *Affichage d'un automate qui reconnait le langage vide 
 */
-void print_automate_langage_vide(struct graphe g){
+void print_automate_langage_vide(struct automate g){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 1\n");
 	printf("---liste des sommets : %d\n", g.tab_etats[0].num_etat);
@@ -40,8 +40,8 @@ void print_automate_langage_vide(struct graphe g){
 /*
 *Génére un automate qui reconnait le mot vide 
 */
-struct graphe automate_mot_vide(){
-	struct graphe g;
+struct automate automate_mot_vide(){
+	struct automate g;
 	g.sommet_initial.num_etat=1;			
 	g.sommet_initial.is_final=true;
 	g.tab_etats=malloc(1*sizeof(struct etat));
@@ -52,7 +52,7 @@ struct graphe automate_mot_vide(){
 /*
 *affiche un automate qui reconnait le mot vide 
 */
-void print_automate_mot_vide(struct graphe g2){
+void print_automate_mot_vide(struct automate g2){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 1\n");
 	printf("---liste des sommets : %d\n", g2.tab_etats[0].num_etat);
@@ -63,8 +63,8 @@ void print_automate_mot_vide(struct graphe g2){
 /*
 *Genere un automate qui reconnait un mot composé d'un caractere
 */
-struct graphe automate_un_mot(char* mot){
-	struct graphe g;
+struct automate automate_un_mot(char* mot){
+	struct automate g;
 	g.tab_etats=malloc(2*sizeof(struct etat));
 	g.tab_arretes=malloc(1*sizeof(struct etat));
 
@@ -92,7 +92,7 @@ struct graphe automate_un_mot(char* mot){
 /*
 *Affiche un automate qui reconnait un mot
 */
-void print_automate_un_mot(struct graphe g3){
+void print_automate_un_mot(struct automate g3){
 	printf("Automate:\n");
 	printf("---nombre de sommets : 2\n");
 	printf("---liste des sommets : %d - %d\n", g3.tab_etats[0].num_etat, g3.tab_etats[1].num_etat);
@@ -105,7 +105,7 @@ void print_automate_un_mot(struct graphe g3){
 /*
 *Ajoute un etat a l'automate
 */
-void addToGraphe(struct graphe* g, struct etat etat){
+void addToGraphe(struct automate* g, struct etat etat){
 	for (int k=0;k<g->nb_etats;k++){
 		if (g->tab_etats[k].num_etat == etat.num_etat){
 			return;
@@ -119,7 +119,7 @@ void addToGraphe(struct graphe* g, struct etat etat){
 /*
 *Genere un automate qui reconnait la reunion des langages des deux automates passés en parametres
 */
-struct graphe reunion_automate(struct graphe g1, struct graphe g2){
+struct automate reunion_automate(struct automate g1, struct automate g2){
 	int i;
 	int indiceGraphe;
 	int dernierElement=1;
@@ -127,7 +127,7 @@ struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 	int j=0;
 	int numero_etat=g1.nb_etats;
 	int nbr_transitions=g1.nb_transitions+g2.nb_transitions;
-	struct graphe g;
+	struct automate g;
 	g.tab_etats=malloc(nb_etats*sizeof(struct etat));
 	g.tab_arretes=malloc(nbr_transitions*sizeof(struct arrete));
 	g.nb_transitions=g1.nb_transitions+g2.nb_transitions;
@@ -166,7 +166,7 @@ struct graphe reunion_automate(struct graphe g1, struct graphe g2){
 /*
 *Affiche un automate resultat de la reunion
 */
-void print_reunion(struct graphe g){
+void print_reunion(struct automate g){
 	printf("\nAutomate\n");
 	printf("---Nombre d'états : %d\n", g.nb_etats);
 	printf("---Nombre de transactions : %d\n", g.nb_transitions);
@@ -190,7 +190,7 @@ void print_reunion(struct graphe g){
 /*
 *Genere un automate qui la concatenation des langages des deux automates passés en paramétre 
 */
-struct graphe concatenation_automate(struct graphe g1, struct graphe g2){
+struct automate concatenation_automate(struct automate g1, struct automate g2){
 	int i;
 	int indiceGraphe;
 	int dernierElement=1;
@@ -198,7 +198,7 @@ struct graphe concatenation_automate(struct graphe g1, struct graphe g2){
 	int j=0;
 	int numero_etat=g1.nb_etats;
 	int nbr_transitions=g1.nb_transitions+g2.nb_transitions;
-	struct graphe g;
+	struct automate g;
 	g.tab_etats=malloc(nb_etats*sizeof(struct etat));
 	g.tab_arretes=malloc(nbr_transitions*sizeof(struct arrete));
 	g.nb_transitions=g1.nb_transitions+g2.nb_transitions;
@@ -251,7 +251,7 @@ struct graphe concatenation_automate(struct graphe g1, struct graphe g2){
 /*
 *Affiche un automate resultat de la concatenation
 */
-void print_concatenate(struct graphe g){
+void print_concatenate(struct automate g){
 	printf("\nAutomate\n");
 	printf("---Nombre d'états : %d\n", g.nb_etats);
 	printf("---Nombre de transactions : %d\n", g.nb_transitions);
@@ -273,7 +273,7 @@ void print_concatenate(struct graphe g){
 /*
 *Genere un automate qui reconnait la fermeture de kleene pour l'automate passe en parametres
 */
-struct graphe fermeture_kleene(struct graphe g){
+struct automate fermeture_kleene(struct automate g){
 	int nbrEtatsFinaux=0;
 	int transitionsSommetInit=0;
 	for (int i=0;i<g.nb_transitions;i++){
@@ -286,7 +286,7 @@ struct graphe fermeture_kleene(struct graphe g){
 			transitionsSommetInit++;
 		}	
 	}
-	struct graphe gRetour;
+	struct automate gRetour;
 	int nbr_transitions=g.nb_transitions+transitionsSommetInit*nbrEtatsFinaux;
 	gRetour.tab_etats=malloc(g.nb_etats*sizeof(struct etat)+1);
 	gRetour.tab_arretes=malloc(nbr_transitions*sizeof(struct arrete)+1);
@@ -320,7 +320,7 @@ struct graphe fermeture_kleene(struct graphe g){
 /*
 *Affiche l'automate de la fermeture de kleene genere
 */
-void print_kleene(struct graphe g){
+void print_kleene(struct automate g){
 	printf("\nAutomate : \n");
 	printf("---nombre de sommets : %d\n", g.nb_etats);
 	printf("---sommet initial : %d\n", g.tab_etats[0].num_etat);
@@ -335,7 +335,7 @@ void print_kleene(struct graphe g){
 /*
 *Execute un mot sur un automate et verifie s'il est valide
 */
-bool mot_sur_automate(struct graphe g,char* c ){
+bool mot_sur_automate(struct automate g,char* c ){
 	int l_c;
 	l_c=(int)strlen(c);
 	if(g.nb_etats<l_c){
@@ -362,7 +362,7 @@ bool mot_sur_automate(struct graphe g,char* c ){
 /*
 *affiche un mot genere sur un automate et verifie s'il est valide ou pas 
 */
-void print_mot_sur_automate(struct graphe g,char * c)
+void print_mot_sur_automate(struct automate g,char * c)
 {
     int l_c;
 	l_c=(int)strlen(c);
@@ -384,53 +384,53 @@ void print_mot_sur_automate(struct graphe g,char * c)
 }
 
 int main(){
-	struct graphe g;	
+	struct automate g;	
 	g=automate_langage_vide();
 	//print_automate_langage_vide(g);
-	struct graphe ga;
+	struct automate ga;
 	ga=automate_un_mot("a");
-	struct graphe gb;
+	struct automate gb;
 	gb=automate_un_mot("b");
-	struct graphe gc;
+	struct automate gc;
 	gc=automate_un_mot("c");
-	struct graphe gd;
+	struct automate gd;
 	gd=automate_un_mot("d");
-	struct graphe ge;
+	struct automate ge;
 	ge=automate_un_mot("e");
 
-	struct graphe gab_reunion;
+	struct automate gab_reunion;
 	gab_reunion=reunion_automate(ga, gb);
 
-	struct graphe gcd_reunion;
+	struct automate gcd_reunion;
 	gcd_reunion=reunion_automate(gc, gd);
 
-	struct graphe gabcd_reunion;
+	struct automate gabcd_reunion;
 	gabcd_reunion=reunion_automate(gab_reunion, gcd_reunion);
 	//print_reunion(gabcd_reunion);
 
-	struct graphe gab;
+	struct automate gab;
 	gab=concatenation_automate(ga, gb);
 
-	struct graphe gcd;
+	struct automate gcd;
 	gcd=concatenation_automate(gc, gd);
 
 	printf("\n------------------------concatenation-----------------------------\n");
-	struct graphe gabcd;
+	struct automate gabcd;
 	gabcd=concatenation_automate(gab, gcd);
 
-	struct graphe gabcde;
+	struct automate gabcde;
 	gabcde=concatenation_automate(gabcd, ge);
-	print_concatenate(gabcde);/*concatenation sur les graphes gabcd et ge */
+	print_concatenate(gabcde);/*concatenation sur les automate gabcd et ge */
 
 	printf("\n------------------------reunion------------------------------------\n");
-	struct graphe gabcd_re_conc;
+	struct automate gabcd_re_conc;
 	gabcd_re_conc=reunion_automate(gab, gcd);
-	print_reunion(gabcd_re_conc); /*reunion  les graphes gab et gcd */
+	print_reunion(gabcd_re_conc); /*reunion  les automate gab et gcd */
 
 	printf("\n------------------------fermeture de kleene-----------------------------\n");
 	/***Test Fermeture de kleene***/
-	struct graphe graphe=fermeture_kleene(gabcd);	/*abcd devient (abcd)* */
-	print_kleene(graphe);
+	struct automate automate_kleene=fermeture_kleene(gabcd);	/*abcd devient (abcd)* */
+	print_kleene(automate_kleene);
 
 	printf("\n------------------------Automate deterministe -----------------------------\n");
 	

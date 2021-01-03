@@ -13,35 +13,31 @@ typedef struct arrete{
 	char* symbole;
 }arrete;
 
-typedef struct graphe{
+typedef struct automate{
 	etat sommet_initial;
 	int nb_etats;
 	int nb_transitions;
 	struct etat* tab_etats;
 	struct arrete* tab_arretes;
-}graphe;
+}afd;
 
 int write_is_final(int sommet, bool isfinal); /*verifie si un sommet est terminal*/
 
-struct graphe automate_langage_vide();/*genere un automate pour le langage vide*/
-struct graphe automate_mot_vide(); /*genere un automate pour le mot vide*/
-struct graphe automate_un_mot(char* mot);/*genere un automate pour un mot*/
-struct graphe reunion_automate(struct graphe g1, struct graphe g2);/*reunion de deux automates*/
-struct graphe concatenation_automate(struct graphe g1, struct graphe g2);/*concatene deux graphes*/
-struct graphe fermeture_kleene(struct graphe g);/*fermeture de kleene*/
-bool automate_deterministe(struct graphe g,char* c );/*execute un string sur un automate  */
+struct automate automate_langage_vide();/*genere un automate pour le langage vide*/
+struct automate automate_mot_vide(); /*genere un automate pour le mot vide*/
+struct automate automate_un_mot(char* mot);/*genere un automate pour un mot*/
+struct automate reunion_automate(struct automate g1, struct automate g2);/*reunion de deux automates*/
+struct automate concatenation_automate(struct automate g1, struct automate g2);/*concatene deux graphes*/
+struct automate fermeture_kleene(struct automate g);/*fermeture de kleene*/
 
+void addToGraphe(struct automate* g, struct etat etat); /*ajoute etat dans le graphe s'il n'y figure pas*/
 
-void addToGraphe(struct graphe* g, struct etat etat); /*ajoute etat dans le graphe s'il n'y figure pas*/
-
-void print_automate_langage_vide(struct graphe g); /*print l'automate généré du langage vide*/
-void print_automate_mot_vide(struct graphe g2);/*affiche l'automate généré du mot vide*/
-void print_automate_un_mot(struct graphe g3);/*affiche l'automate généré pour un mot*/
-void print_reunion(struct graphe g);/*affiche l'automate de la réunion*/
-void print_concatenate(struct graphe g);/*affiche le graphe de la concatenation*/
-void print_kleene(struct graphe g);/*affiche le graphe de la fermeture de kleene*/
-void print_automate_deterministe(struct graphe g,char * c);/*affiche si le string est valide sur l'automate ou pas */
-
+void print_automate_langage_vide(struct automate g); /*print l'automate généré du langage vide*/
+void print_automate_mot_vide(struct automate g2);/*affiche l'automate généré du mot vide*/
+void print_automate_un_mot(struct automate g3);/*affiche l'automate généré pour un mot*/
+void print_reunion(struct automate g);/*affiche l'automate de la réunion*/
+void print_concatenate(struct automate g);/*affiche le graphe de la concatenation*/
+void print_kleene(struct automate g);/*affiche le graphe de la fermeture de kleene*/
 
 
 
