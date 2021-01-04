@@ -5,6 +5,8 @@
 #include <string.h>
 
 /*
+*@param int sommet
+*@param bool isfinal
 *Vérifie si un sommet est final
 */
 int write_is_final(int sommet, bool isfinal){
@@ -14,6 +16,7 @@ int write_is_final(int sommet, bool isfinal){
 		return false;
 	
 }
+
 
 /*
 Génére un automate qui reconnait le langage vide 
@@ -28,6 +31,7 @@ struct automate automate_langage_vide(){
 	return g;	
 }
 /*
+*@param automate g
 *Affichage d'un automate qui reconnait le langage vide 
 */
 void print_automate_langage_vide(struct automate g){
@@ -50,6 +54,7 @@ struct automate automate_mot_vide(){
 	return g;	
 }
 /*
+*@param automate g2
 *affiche un automate qui reconnait le mot vide 
 */
 void print_automate_mot_vide(struct automate g2){
@@ -61,6 +66,7 @@ void print_automate_mot_vide(struct automate g2){
 }
 
 /*
+*@param char* mot composé d'un seul caractére 
 *Genere un automate qui reconnait un mot composé d'un caractere
 */
 struct automate automate_un_mot(char* mot){
@@ -90,6 +96,7 @@ struct automate automate_un_mot(char* mot){
 }
 
 /*
+*@param automate g3
 *Affiche un automate qui reconnait un mot
 */
 void print_automate_un_mot(struct automate g3){
@@ -103,6 +110,8 @@ void print_automate_un_mot(struct automate g3){
 }
 
 /*
+*@param automate automate g
+*@param etat etat 
 *Ajoute un etat a l'automate
 */
 void addToGraphe(struct automate* g, struct etat etat){
@@ -117,6 +126,8 @@ void addToGraphe(struct automate* g, struct etat etat){
 }
 
 /*
+*@param automate g1
+*@param automate g2
 *Genere un automate qui reconnait la reunion des langages des deux automates passés en parametres
 */
 struct automate reunion_automate(struct automate g1, struct automate g2){
@@ -164,6 +175,8 @@ struct automate reunion_automate(struct automate g1, struct automate g2){
 }
 
 /*
+/*
+*@param automate 
 *Affiche un automate resultat de la reunion
 */
 void print_reunion(struct automate g){
@@ -188,6 +201,8 @@ void print_reunion(struct automate g){
 }
 
 /*
+*@param automate g1
+*@param automate g2
 *Genere un automate qui la concatenation des langages des deux automates passés en paramétre 
 */
 struct automate concatenation_automate(struct automate g1, struct automate g2){
@@ -249,6 +264,7 @@ struct automate concatenation_automate(struct automate g1, struct automate g2){
 }
 
 /*
+*@param automate g
 *Affiche un automate resultat de la concatenation
 */
 void print_concatenate(struct automate g){
@@ -271,6 +287,7 @@ void print_concatenate(struct automate g){
 
 
 /*
+*@param automate g
 *Genere un automate qui reconnait la fermeture de kleene pour l'automate passe en parametres
 */
 struct automate fermeture_kleene(struct automate g){
@@ -318,6 +335,7 @@ struct automate fermeture_kleene(struct automate g){
 }
 
 /*
+*@param automate 
 *Affiche l'automate de la fermeture de kleene genere
 */
 void print_kleene(struct automate g){
@@ -333,6 +351,8 @@ void print_kleene(struct automate g){
 }
 
 /*
+* @param automate
+* @param sylbole c 
 *Execute un mot sur un automate et verifie s'il est valide
 */
 bool mot_sur_automate(struct automate g,char* c ){
@@ -360,6 +380,8 @@ bool mot_sur_automate(struct automate g,char* c ){
     return 1;
 }
 /*
+* @param automate
+* @param sylbole c 
 *affiche un mot genere sur un automate et verifie s'il est valide ou pas 
 */
 void print_mot_sur_automate(struct automate g,char * c)
@@ -382,6 +404,199 @@ void print_mot_sur_automate(struct automate g,char * c)
 		printf("string %s valide sur l'automate  \n",c);
 	}
 }
+
+/*
+*@param numero
+* prend en entrée un int et retourne sa longueur
+*/
+int get_length_digit(int numero){
+	int nb_digit=0;
+	while (numero){
+		nb_digit++;
+		numero/=10;			
+	}
+	return nb_digit;
+}
+
+/*
+* @param automate
+* @param symbole
+* calcule le nombre d'occurences du symbole dans l'automate
+*/
+int get_nbr_transition_symbole(struct automate g, char* symbole){
+	int nb_occurences=0;
+	for (int i=0;i<g.nb_transitions;i++){
+		if(g.tab_arretes[i].symbole==symbole){
+			nb_occurences++;		
+		}	
+	}
+	return nb_occurences;
+}
+
+/*
+* @param automate
+* @param symbole
+* @param numero d'automate
+* retourne toutes les transitions qui ont comme etat de depart l'etat avec depart comme numero
+*/
+struct transitionArray get_transitions(struct automate g, int depart, char* symbole){
+	struct transitionArray transitions;
+	transitions.tab_arretes=malloc(g.nb_transitions*sizeof(struct arrete)); 
+	transitions.nb_transitions=0;
+	int indiceStock=0;
+	etat etat;
+	bool in=0;
+	for (int i=0;i<g.nb_etats;i++){
+		if (g.tab_etats[i].num_etat==depart){
+			etat = g.tab_etats[i];		
+			in = 1;		
+		}
+	}
+	if(in==1){
+		for (int i=0;i<g.nb_transitions;i++){
+			if(g.tab_arretes[i].symbole==symbole && g.tab_arretes[i].sommet_depart.num_etat==etat.num_etat){
+				transitions.tab_arretes[indiceStock].sommet_depart = etat;
+				transitions.tab_arretes[indiceStock].symbole = symbole;
+				transitions.tab_arretes[indiceStock].sommet_destination = g.tab_arretes[i].sommet_destination;
+				transitions.nb_transitions++;
+				indiceStock++;
+			}	
+		}
+	}
+	return transitions;
+}
+
+/*
+* @param automate
+* @param etat
+* Vérifie si un état existe dans un automate et retourne 1 si c'est le cas, sinon retourne 0
+*/
+bool etat_in_automate(struct a_fd g,etat_a_fd etat){
+	for (int i=0;i< g.nb_etats;i++){
+		if(g.tab_etats[i].nb_elements==etat.nb_elements){
+			bool not_equals=0;
+			for (int j=0;j< etat.nb_elements;j++){
+				if(etat.num_etat[j]!=g.tab_etats[i].num_etat[j]){
+					not_equals=1;
+				}
+			}
+			if(not_equals==0){
+				return 1;		
+			}
+		}
+	}
+	return 0;
+}
+
+/*
+* @param automate
+* Affiche l'automate de determinisation
+*/
+void print_automate_deterministe(struct a_fd* g){
+	printf("\n---Automate\n");
+	for (int i=0;i<g->nb_transitions;i++){
+		printf("------Transition de {");	
+		for (int j=0; j< g->tab_arretes[i].sommet_depart.nb_elements;j++){
+			printf("%d ",g->tab_arretes[i].sommet_depart.num_etat[j]);	
+		}
+		printf("}Avec le symbole : %s vers l'etat {", g->tab_arretes[i].symbole);
+		for (int j=0; j< g->tab_arretes[i].sommet_destination.nb_elements;j++){
+			printf("%d ",g->tab_arretes[i].sommet_destination.num_etat[j]);	
+		}
+		printf("}\n");
+	}
+}
+
+/*
+* @param automate
+* Déterminise un automate donnée en entrée et retourne l'automate determinisé
+*/
+struct a_fd determinisation(struct automate g){
+	struct a_fd gr;
+	gr.tab_etats=malloc(g.nb_etats*g.nb_etats*sizeof(struct etat_a_fd));
+	gr.tab_arretes=malloc(g.nb_transitions*g.nb_transitions*sizeof(struct arrete_a_fd));
+	gr.tab_etats[0].num_etat=malloc(g.nb_etats*sizeof(struct etat_a_fd));
+	gr.tab_etats[0].num_etat[0]=1;
+	gr.tab_etats[0].nb_elements=1;
+	gr.tab_etats[0].is_final=0;
+	gr.nb_etats=1;
+	int c_sommet=0;
+
+	/*Get alphabet*/
+	char** alphabet;
+	alphabet= malloc(sizeof(char**)*g.nb_transitions);
+	bool est_dedans;
+	int nombre_symbole=0;
+	bool is_in=0;
+	for(int i=0;i<g.nb_transitions;i++){
+		if(i==0){
+			alphabet[i]=g.tab_arretes[i].symbole;
+			nombre_symbole++;
+		}else{
+			for (int j=0;j<nombre_symbole;j++){
+				if(alphabet[j]==g.tab_arretes[i].symbole){
+					is_in=1;				
+				}			
+			}
+			if(is_in==0){
+				alphabet[nombre_symbole]=g.tab_arretes[i].symbole;
+				nombre_symbole++;	
+			}
+			is_in=0;
+		}
+	}
+	int ajoutTransition=0;
+	int ajoutEtat=1;
+	int indiceEtat=1;
+	gr.nb_transitions=0;
+	while(c_sommet<gr.nb_etats){ /*tant qu'il existe des elements qui n'ont pas encore été traité*/
+		for (int i=0;i<nombre_symbole;i++){/*on parcourt pour chaque symbole*/
+			int indiceTabTransitions=0;
+			arrete* tab_transitions=malloc(nombre_symbole*10*sizeof(struct arrete));
+			struct transitionArray tab_arretes_sommet;
+			for (int k=0;k<gr.tab_etats[c_sommet].nb_elements;k++){/*pour chaque numero dans l'etat*/
+				/*recuperer toutes les transitions*/
+				tab_arretes_sommet=get_transitions(g, gr.tab_etats[c_sommet].num_etat[k], alphabet[i]);		
+				for (int indice_t=0;indice_t<tab_arretes_sommet.nb_transitions;indice_t++){
+
+					tab_transitions[indiceTabTransitions]=tab_arretes_sommet.tab_arretes[indice_t];		
+					indiceTabTransitions++;	
+				}
+
+			}
+			/*Stocker les transitions récupérés précédemment s'ils existent*/
+			if(indiceTabTransitions	>0){
+					char s1[30];
+					sprintf(s1, "%d", tab_transitions[0].sommet_destination.num_etat);
+					int sommet_arrivee=0;
+					int* tabEntiers=malloc(10*sizeof(int));;
+					tabEntiers[0]= tab_transitions[0].sommet_destination.num_etat;
+					for (int ind=1;ind<indiceTabTransitions;ind++){
+						tabEntiers[ind]= tab_transitions[ind].sommet_destination.num_etat;
+					}
+					gr.tab_arretes[ajoutTransition].sommet_depart=gr.tab_etats[c_sommet];
+					gr.tab_arretes[ajoutTransition].symbole=alphabet[i];
+					struct etat_a_fd nouveauEtat;
+					nouveauEtat.num_etat=tabEntiers;
+					nouveauEtat.is_final=0;
+					nouveauEtat.nb_elements=indiceTabTransitions;
+					gr.tab_arretes[ajoutTransition].sommet_destination=nouveauEtat;
+					ajoutTransition++;
+					gr.nb_transitions++;
+					/*Ajouter l'etat s'il n'a pas été ajouté auparavant*/
+					if (etat_in_automate(gr,nouveauEtat)==0){
+						gr.tab_etats[ajoutEtat]=nouveauEtat;
+						ajoutEtat++;
+						gr.nb_etats++;
+					}
+			}
+			
+		}
+		c_sommet++;	
+	}
+	return gr;
+}
+
 
 int main(){
 	struct automate g;	
@@ -437,5 +652,20 @@ int main(){
 	print_mot_sur_automate(gab,"ab");
 	print_mot_sur_automate(gabcd,"abcd");
 	print_mot_sur_automate(ga,"e");
+
+	/******************Determinisation********************/
+	struct automate gaa_reunion;
+	gaa_reunion=reunion_automate(ga, ga);
+	struct automate gaaab_reunion;
+	gaaab_reunion=reunion_automate(gaa_reunion, gab_reunion);
+	
+	struct automate gaaabb_reunion;	
+	gaaabb_reunion =reunion_automate(gaaab_reunion, gb);
+	printf("\n======Graphe avant determinisation :=====\n");
+	print_reunion(gaaabb_reunion);
+	struct a_fd afd=determinisation(gaaabb_reunion);
+	printf("\n======Graphe après determinisation :=====\n");
+	print_automate_deterministe(&afd);
+	
 }
 
